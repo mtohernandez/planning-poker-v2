@@ -1,0 +1,37 @@
+name: Build and Deploy Vite App to Cloudfront
+on:
+  push:
+    branches: [ main ]
+jobs:
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    env:
+      BUCKET_NAME: ${{ secrets.BUCKET_NAME }}
+      DIST: dist
+      REGION: us-east-2
+      DIST_ID: ${{ secrets.DIST_ID }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.REGION }}
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build
+      run: npm run build
+
+    - name: Copy files to AWS CLI
+      run: aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET_NAME }} 
+
+    - name: Copy files to AWS CLI
+      run: aws cloudfront create-invalidation --distribution-id ${{ env.DIST_ID }} --paths "/*"
+      
