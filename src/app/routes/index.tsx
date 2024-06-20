@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { Join } from './app/session';
-import { Session } from './app/join';
+import { Join } from './app/join';
+import { Session } from './app/session';
 import { NotFoundRoute } from './not-found';
 
 export const createRouter = () =>
