@@ -1,3 +1,3 @@
 export const Join = () => {
-  return <div>Join Page</div>;
+  return <div>Join Page v2</div>;
 };

@@ -1,7 +1,7 @@
 name: Build and Deploy Vite App to Cloudfront
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 jobs:
   build-and-deploy:
     name: Build and Deploy
@@ -13,25 +13,24 @@ jobs:
       DIST_ID: ${{ secrets.DIST_ID }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.REGION }}
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Install Dependencies
-      run: npm install
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.REGION }}
 
-    - name: Build
-      run: npm run build
+      - name: Install Dependencies
+        run: npm install
 
-    - name: Copy files to AWS CLI
-      run: aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET_NAME }} 
+      - name: Build
+        run: npm run build
 
-    - name: Copy files to AWS CLI
-      run: aws cloudfront create-invalidation --distribution-id ${{ env.DIST_ID }} --paths "/*"
-      
+      - name: Copy files to AWS CLI
+        run: aws s3 sync --delete ${{ env.DIST }} s3://${{ env.BUCKET_NAME }}
+
+      - name: Copy files to AWS CLI
+        run: aws cloudfront create-invalidation --distribution-id ${{ env.DIST_ID }} --paths "/*"
